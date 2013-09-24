@@ -16,4 +16,5 @@ def process(player):
 		player.velx = 0
 
 	if keys[pygame.K_w]:
-		player.shoot()
+		if player.shot is None:
+			player.shoot()
