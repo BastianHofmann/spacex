@@ -10,6 +10,8 @@ Python 2.7 and PyGame 1.8 are required.
 
 `python main.py`
 
+`w` to move left, `d` to move right, `w` to shoot
+
 ## Contribution
 
 Contribution in form of additional features, bug fixes, performence improvements and refactoring are appreciated.
