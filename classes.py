@@ -20,7 +20,7 @@ class Application():
 
 	def __init__(self, caption, resolution, fps):
 		self.screen = pygame.display.set_mode(resolution)
-		self.font = font = pygame.font.SysFont(None, 20)
+		self.font = font = pygame.font.SysFont('monospace', 12)
 		self.clock = clock = pygame.time.Clock()
 		self.fps = fps
 		self.resolution = resolution
@@ -31,10 +31,13 @@ class Application():
 
 		loop = Loop(self)
 
+		Enemy.List.empty()
+		BaseClass.Sprites.empty()
+
 		pygame.display.set_caption(self.caption)
 
 		loop.player = Player(100, self.resolution[1] - 50, 20, 18, 'resources/player.png')
-		loop.images.append(pygame.image.load('resources/space_map.png'))
+		loop.images.append(pygame.transform.scale2x(pygame.image.load('resources/space_map.png')))
 		loop.images.append(pygame.image.load('resources/death.png'))
 		loop.difficulty = 50
 
@@ -53,12 +56,12 @@ class Loop():
 		self.app = app
 	
 	def tick(self):
-		process(self.player)
+		process(self.app, self.player)
 		self.player.motion(self.app.resolution)
 		if self.player.alive():
 			if randint(1, self.difficulty) == 1:
-				Enemy(randint(0, 340), -20, 18, 18, 'resources/rock.png', self.player)
-				if self.difficulty > 10 and randint(1, 5) == 1:
+				Enemy(randint(0, 320), -20, 18, 18, 'resources/rock.png', self.player)
+				if self.difficulty > 10 and randint(1, 8) == 1:
 					self.difficulty -= 1
 
 			for enemy in Enemy.List:
@@ -68,6 +71,7 @@ class Loop():
 				explosion.update()
 
 			self.score = self.app.font.render('score: ' + str(self.player.score), True, (255, 255, 0))
+			self.fpst = self.app.font.render('fps: ' + str(int(self.app.clock.get_fps())), True, (255, 255, 0))
 		else:
 			self.app.running = False
 
@@ -80,6 +84,7 @@ class Loop():
 		if self.app.running == False:
 			self.app.screen.blit(self.images[1], self.images[1].get_rect())
 		self.app.screen.blit(self.score, (10, 10))
+		self.app.screen.blit(self.fpst, (10, 25))
 		pygame.display.flip()
 		
 		

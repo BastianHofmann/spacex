@@ -1,6 +1,6 @@
 import pygame, sys
 
-def process(player):
+def process(app, player):
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 			pygame.quit()
@@ -15,6 +15,13 @@ def process(player):
 	else:
 		player.velx = 0
 
-	if keys[pygame.K_w]:
+	if keys[pygame.K_SPACE]:
 		if player.shot is None:
 			player.shoot()
+
+	if keys[pygame.K_r]:
+		if app.running == False:
+			app.run()
+
+	# if keys[pygame.K_d]:
+	# 	player.velx = 8
