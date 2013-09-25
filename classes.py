@@ -10,19 +10,18 @@ class Application():
 
 	clock = None
 
-	fps = 0
-
 	resolution = []
 
 	running = False
 
 	caption = ''
 
+	fps = 0
+
 	def __init__(self, caption, resolution, fps):
 		self.screen = pygame.display.set_mode(resolution)
 		self.font = font = pygame.font.SysFont('monospace', 12)
-		self.clock = clock = pygame.time.Clock()
-		self.fps = fps
+		self.clock = pygame.time.Clock()
 		self.resolution = resolution
 		self.caption = caption
 
@@ -60,7 +59,10 @@ class Loop():
 		self.player.motion(self.app.resolution)
 		if self.player.alive():
 			if randint(1, self.difficulty) == 1:
-				Enemy(randint(0, 320), -20, 18, 18, 'resources/rock.png', self.player)
+				if randint(1, 8) == 3:
+					Enemy(randint(0, 320), -40, 34, 34, 'resources/rock_large.png', self.player, 500)
+				else:
+					Enemy(randint(0, 320), -30, 18, 18, 'resources/rock.png', self.player, 200)
 				if self.difficulty > 10 and randint(1, 8) == 1:
 					self.difficulty -= 1
 
@@ -138,7 +140,7 @@ class Player(BaseClass):
 
 		if self.rect.x < 0:
 			self.rect.x = 0
-		elif self.rect.x + self.width + 20> resolution[0]:
+		elif self.rect.x + self.width + 20 > resolution[0]:
 			self.rect.x = resolution[0] - self.width - 20
 
 		if self.shot is not None:
@@ -181,12 +183,15 @@ class Shot(BaseClass):
 class Enemy(BaseClass):
 
 	List = pygame.sprite.Group()
+
+	score = 200
 	
-	def __init__(self, x, y, width, height, image, player):
+	def __init__(self, x, y, width, height, image, player, score):
 		BaseClass.__init__(self, x, y, width, height, image)
 
 		self.List.add(self)
 		self.player = player
+		self.score = score
 
 	def motion(self, resolution, difficulty):
 		self.rect.y += math.sqrt(55 - difficulty)
@@ -198,8 +203,8 @@ class Enemy(BaseClass):
 			if pygame.sprite.collide_rect(self, shot):
 				self.kill()
 				shot.destroy()
-				self.player.score += 200
-				Explosion(self.rect.x, self.rect.y, 18, 18, 'resources/explosion0.png')
+				self.player.score += self.score
+				Explosion(self.rect.x - (18 - self.width) / 2, self.rect.y  - (18 - self.height) / 2, 18, 18, 'resources/explosion0.png')
 
 
 class Explosion(BaseClass):
