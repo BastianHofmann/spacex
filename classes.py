@@ -38,7 +38,7 @@ class Application():
 		loop.images.append(pygame.image.load('resources/death.png'))
 		loop.difficulty = 50
 
-		while self.running:
+		while True:
 			loop.tick()
 			self.clock.tick(self.fps)
 
