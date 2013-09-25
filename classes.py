@@ -1,5 +1,88 @@
 import pygame, math
 from random import randint
+from process import process
+
+class Application():
+	
+	screen = None
+
+	font = None
+
+	clock = None
+
+	fps = 0
+
+	resolution = []
+
+	running = False
+
+	caption = ''
+
+	def __init__(self, caption, resolution, fps):
+		self.screen = pygame.display.set_mode(resolution)
+		self.font = font = pygame.font.SysFont(None, 20)
+		self.clock = clock = pygame.time.Clock()
+		self.fps = fps
+		self.resolution = resolution
+		self.caption = caption
+
+	def run(self):
+		self.running = True
+
+		loop = Loop(self)
+
+		pygame.display.set_caption(self.caption)
+
+		loop.player = Player(100, self.resolution[1] - 50, 20, 18, 'resources/player.png')
+		loop.images.append(pygame.image.load('resources/space_map.png'))
+		loop.images.append(pygame.image.load('resources/death.png'))
+		loop.difficulty = 50
+
+		while self.running:
+			loop.tick()
+			self.clock.tick(self.fps)
+
+
+class Loop():
+
+	player = None
+
+	images = []
+
+	def __init__(self, app):
+		self.app = app
+	
+	def tick(self):
+		process(self.player)
+		self.player.motion(self.app.resolution)
+		if self.player.alive():
+			if randint(1, self.difficulty) == 1:
+				Enemy(randint(0, 340), -20, 18, 18, 'resources/rock.png', self.player)
+				if self.difficulty > 10 and randint(1, 5) == 1:
+					self.difficulty -= 1
+
+			for enemy in Enemy.List:
+				enemy.motion(self.app.resolution, self.difficulty)
+
+			for explosion in Explosion.List:
+				explosion.update()
+
+			self.score = self.app.font.render('score: ' + str(self.player.score), True, (255, 255, 0))
+		else:
+			self.app.running = False
+
+		self.draw()
+
+	def draw(self):
+		self.app.screen.fill((0, 255, 0))
+		self.app.screen.blit(self.images[0], self.images[0].get_rect())
+		BaseClass.Sprites.draw(self.app.screen)
+		if self.app.running == False:
+			self.app.screen.blit(self.images[1], self.images[1].get_rect())
+		self.app.screen.blit(self.score, (10, 10))
+		pygame.display.flip()
+		
+		
 
 class BaseClass(pygame.sprite.Sprite):
 
